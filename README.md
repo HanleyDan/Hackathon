@@ -8,7 +8,7 @@ To build:
 mvn clean compile
 ```
 
-
+To run
 ```console
-run.sh
+mvn exec:java
 ```
