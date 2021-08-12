@@ -43,13 +43,10 @@ public class Main {
         ScheduledExecutorService marketExecutor = Executors.newScheduledThreadPool(1);
         ScheduledExecutorService clientExecutor = Executors.newScheduledThreadPool(1);
 
-        int marketInitialDelay = 1;
-        int clientInitialDelay = 2;
-        int marketPeriod = 2;
+        int marketInitialDelay = 2;
+        int clientInitialDelay = 1;
+        int marketPeriod = 1;
         int clientPeriod = 1;
-
-
-
 
         marketExecutor.scheduleAtFixedRate(new TradingTask(marketRandom, marketBuyOrSell, "Market", "market-trades", props), marketInitialDelay, marketPeriod, TimeUnit.SECONDS);
         clientExecutor.scheduleAtFixedRate(new TradingTask(clientRandom, clientBuyOrSell, "Client", "client-trades", props), clientInitialDelay, clientPeriod, TimeUnit.SECONDS);

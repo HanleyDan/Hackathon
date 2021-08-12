@@ -48,8 +48,17 @@ public class TradingTask implements Runnable {
 
 
            producer.flush();
-
+        randomWait();
         producer.close();
         System.out.println("record sent");
     };
+
+    private void randomWait() {
+        //Wait for a while
+        try {
+            Thread.sleep((long) (Math.random()*1000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
