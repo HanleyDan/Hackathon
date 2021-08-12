@@ -1,13 +1,11 @@
 package com.hazelcast.hackathon.tradeproducer;
 
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 
 import java.util.Properties;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
+
 
 public class TradingTask implements Runnable {
 
@@ -15,33 +13,43 @@ public class TradingTask implements Runnable {
     private Random generator;
     private String orderType;
     private Properties props;
-    private Producer<String, Trade> producer;
+    private String topicName;
 
     public TradingTask(Random generator, boolean buyOrSell, String orderType, String topicName, Properties props) {
         this.buyOrSell = buyOrSell;
         this.generator = generator;
         this.orderType = orderType;
+        this.topicName = topicName;
         this.props = props;
-        producer = new KafkaProducer<String, Trade>(props);
+
     }
 
     public void run() {
-
+        Producer<String, String> producer = new KafkaProducer<String, String>(props);
         String side = buyOrSell ? "BUY" : "SELL";
         buyOrSell = !buyOrSell;
         Trade trade = new Trade(side, orderType, generator);
         System.out.println("===TRADE: " + trade);
 
-        ProducerRecord<String, Trade> record = new ProducerRecord<>("market-trades", trade.id, trade);
-        System.out.println("record built");
-        try {
-            producer.send(record).get();
-            producer.flush();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        ProducerRecord<String, String> record = new ProducerRecord<String,String>(topicName, trade.id, trade.toString());
+
+       // System.out.println(record);
+
+           producer.send(record, new Callback() {
+               @Override
+               public void onCompletion(RecordMetadata m, Exception e) {
+                   if (e != null) {
+                       e.printStackTrace();
+                   } else {
+                       System.out.printf("Produced record to topic %s partition [%d] @ offset %d%n", m.topic(), m.partition(), m.offset());
+                   }
+               }
+           });
+
+
+           producer.flush();
+
+        producer.close();
         System.out.println("record sent");
     };
 }

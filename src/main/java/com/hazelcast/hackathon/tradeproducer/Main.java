@@ -2,9 +2,7 @@ package com.hazelcast.hackathon.tradeproducer;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.errors.TopicExistsException;
 
 import java.io.FileInputStream;
@@ -28,7 +26,8 @@ public class Main {
         props.put(ProducerConfig.ACKS_CONFIG, "all");
         //props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG,10);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaJsonSerializer");
+        //props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaJsonSerializer");
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer");
         main.run(props);
     }
 
@@ -48,6 +47,9 @@ public class Main {
         int clientInitialDelay = 2;
         int marketPeriod = 2;
         int clientPeriod = 1;
+
+
+
 
         marketExecutor.scheduleAtFixedRate(new TradingTask(marketRandom, marketBuyOrSell, "Market", "market-trades", props), marketInitialDelay, marketPeriod, TimeUnit.SECONDS);
         clientExecutor.scheduleAtFixedRate(new TradingTask(clientRandom, clientBuyOrSell, "Client", "client-trades", props), clientInitialDelay, clientPeriod, TimeUnit.SECONDS);
