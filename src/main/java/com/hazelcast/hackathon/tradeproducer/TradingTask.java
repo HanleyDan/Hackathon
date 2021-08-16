@@ -31,10 +31,11 @@ public class TradingTask implements Runnable {
         Trade trade = new Trade(side, orderType, generator);
         System.out.println("===TRADE: " + trade);
 
+        randomWait();
+
         ProducerRecord<String, String> record = new ProducerRecord<String,String>(topicName, trade.id, trade.toString());
 
        // System.out.println(record);
-
            producer.send(record, new Callback() {
                @Override
                public void onCompletion(RecordMetadata m, Exception e) {
@@ -48,7 +49,7 @@ public class TradingTask implements Runnable {
 
 
            producer.flush();
-        randomWait();
+
         producer.close();
         System.out.println("record sent");
     };
@@ -56,7 +57,9 @@ public class TradingTask implements Runnable {
     private void randomWait() {
         //Wait for a while
         try {
-            Thread.sleep((long) (Math.random()*1000));
+            long wait = (long) (Math.random()*1000);
+            //System.out.println(orderType + " " + wait +" millis");
+            Thread.sleep((long) (wait));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
