@@ -26,12 +26,11 @@ public class TradingTask implements Runnable {
 
     public void run() {
         Producer<String, String> producer = new KafkaProducer<String, String>(props);
+        randomWait();
         String side = buyOrSell ? "BUY" : "SELL";
         buyOrSell = !buyOrSell;
         Trade trade = new Trade(side, orderType, generator);
         System.out.println("===TRADE: " + trade);
-
-        randomWait();
 
         ProducerRecord<String, String> record = new ProducerRecord<String,String>(topicName, trade.id, trade.toString());
 
@@ -51,14 +50,14 @@ public class TradingTask implements Runnable {
            producer.flush();
 
         producer.close();
-        System.out.println("record sent");
+       // System.out.println("record sent");
     };
 
     private void randomWait() {
         //Wait for a while
         try {
             long wait = (long) (Math.random()*1000);
-            //System.out.println(orderType + " " + wait +" millis");
+           // System.out.println(orderType + " " + wait +" millis");
             Thread.sleep((long) (wait));
         } catch (InterruptedException e) {
             e.printStackTrace();
