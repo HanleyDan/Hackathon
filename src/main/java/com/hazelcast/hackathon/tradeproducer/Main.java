@@ -48,7 +48,7 @@ public class Main {
         int marketPeriod = 1;
         int clientPeriod = 1;
 
-        marketExecutor.scheduleAtFixedRate(new TradingTask(marketRandom, marketBuyOrSell, "Market", "market-trades", props), marketInitialDelay, marketPeriod, TimeUnit.SECONDS);
+        marketExecutor.scheduleWithFixedDelay(new TradingTask(marketRandom, marketBuyOrSell, "Market", "market-trades", props), marketInitialDelay, marketPeriod, TimeUnit.SECONDS);
         clientExecutor.scheduleAtFixedRate(new TradingTask(clientRandom, clientBuyOrSell, "Client", "client-trades", props), clientInitialDelay, clientPeriod, TimeUnit.SECONDS);
         //quit();
     }
